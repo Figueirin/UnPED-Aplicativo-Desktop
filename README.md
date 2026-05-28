@@ -1,6 +1,6 @@
 # UnPED - Sistema de Comandas para Bares e Restaurantes
 
-Este projeto é uma Prova de Conceito (POC) de um sistema de comandas para restaurantes e bares, desenvolvido como projeto prático para a matéria de Programação Orientada a Objetos (OO) da Universidade de Brasília (UnB). 
+Este projeto é um sistema de comandas para restaurantes e bares, desenvolvido como projeto prático para a matéria de Programação Orientada a Objetos (OO) da Universidade de Brasília (UnB). 
 
 O objetivo do sistema é gerenciar comandas no terminal: abrir comandas associando o número a um cliente, lançar itens do cardápio nas comandas, exibir o extrato de consumo e fechar comandas calculando o total a pagar. Além disso, os dados são salvos em arquivos JSON para não sumirem toda vez que o programa é fechado.
 

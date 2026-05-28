@@ -1,1 +1,22 @@
-[]
+[
+    {
+        "Comanda": 15,
+        "Cliente": "renato",
+        "Items": [
+            {
+                "produto": {
+                    "nome": "Cafe",
+                    "preco": 4.5
+                },
+                "quantidade": 1
+            },
+            {
+                "produto": {
+                    "nome": "Pao de Queijo",
+                    "preco": 6.0
+                },
+                "quantidade": 4
+            }
+        ]
+    }
+]

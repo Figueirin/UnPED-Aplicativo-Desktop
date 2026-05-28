@@ -44,8 +44,9 @@ class Pedido:
         extrato += "=======================================\n"
 
         for item in self.itens:
-            extrato += f"{item}\n"  # Removida a crase perdida
+            extrato += f"{item}\n" 
         
         extrato += "========================================\n"
         extrato += f"total: R$ {self.calcular_total():.2f}"
+        return extrato
 

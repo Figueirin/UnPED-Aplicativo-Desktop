@@ -1,1 +1,34 @@
-[]
+[
+    {
+        "nome": "Cafe",
+        "preco": 4.5
+    },
+    {
+        "nome": "Pao de Queijo",
+        "preco": 6.0
+    },
+    {
+        "nome": "Coca-Cola",
+        "preco": 5.5
+    },
+    {
+        "nome": "Suco de Laranja",
+        "preco": 7.0
+    },
+    {
+        "nome": "Salgado Assado",
+        "preco": 8.5
+    },
+    {
+        "nome": "Bolo de Cenoura",
+        "preco": 6.5
+    },
+    {
+        "nome": "Torta de Frango",
+        "preco": 9.0
+    },
+    {
+        "nome": "Agua Mineral",
+        "preco": 3.0
+    }
+]
