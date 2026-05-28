@@ -208,7 +208,7 @@ def fluxo_cadastrar_produto(service, cardapio):
     cardapio.add_produto(Produto(novo_id, nome, preco, categoria))
     salvar_cardapio(cardapio)
 
-    print(f"Produto '{nome}' cadastrado com sucesso com o ID {novo_id} na categoria '{categoria}'!")
+    print(f"'{nome}' cadastrado com ID {novo_id} na categoria '{categoria}'!")
 
 def fluxo_listar_comandas_ativas(service, cardapio):
     """

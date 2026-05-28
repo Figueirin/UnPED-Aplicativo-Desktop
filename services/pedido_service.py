@@ -13,7 +13,7 @@ class PedidoService:
     def abrir_comanda(self, num_comanda, nome_cliente):
         # Bloqueio de duplicados: se a comanda já estiver aberta, cancela a operação
         if num_comanda in self.pedidos_ativos:
-            print(f"A comanda {num_comanda} ja esta aberta no nome {self.pedidos_ativos[num_comanda].cliente.nome}")
+            print(f"A comanda N.º {num_comanda} | Esta aberta no nome {self.pedidos_ativos[num_comanda].cliente.nome}")
             return False
 
         else:
@@ -21,7 +21,7 @@ class PedidoService:
             cliente = Cliente(nome_cliente)
             novo_pedido = Pedido(num_comanda, cliente)
             self.pedidos_ativos[num_comanda] = novo_pedido
-            print(f"Comanda {num_comanda} aberta para {nome_cliente}")
+            print(f"Comanda: {num_comanda} | Nome: {nome_cliente}")
             return True
 
     def buscar_comandas(self, num_comanda):
@@ -46,5 +46,5 @@ class PedidoService:
 
         print("=== Comandas Abertas ===")
         for num_comanda, pedido in self.pedidos_ativos.items():
-            print(f"Comanda num {num_comanda} | Cliente: {pedido.cliente.nome} | Total Atual R$ {pedido.calcular_total():.2f}")
+            print(f"Comanda Nº {num_comanda} | Cliente: {pedido.cliente.nome} | Total Atual R$ {pedido.calcular_total():.2f}")
 

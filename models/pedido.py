@@ -70,7 +70,7 @@ class Pedido:
         total_geral = subtotal + taxa
         
         extrato = f"Comanda {self.comanda} | Cliente: {self.cliente.nome}\n"
-        extrato += "=================================\n"
+        extrato += "=====================================\n"
 
         # Adiciona a linha de detalhamento de cada item consumido
         for item in self.itens:
@@ -78,7 +78,7 @@ class Pedido:
 
         extrato += f"Subtotal: R$ {subtotal:.2f}\n"
         extrato += f"Taxa de Servico (10%): R$ {taxa:.2f}\n"
-        extrato += "=================================\n"
+        extrato += "=====================================\n"
         extrato += f"Total: R$ {total_geral:.2f}"
 
         return extrato

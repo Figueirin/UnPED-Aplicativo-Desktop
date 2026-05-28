@@ -2,15 +2,7 @@ from models.cardapio import Cardapio
 from services.pedido_service import PedidoService
 from utils.menu import exibir_menu
 from services.persistencia import carregar_cardapio, carregar_pedidos
-from utils.menu import (
-    fluxo_listar_comandas_ativas,
-    fluxo_cadastrar_produto,
-    fluxo_listar_cardapio,
-    fluxo_fechar_comanda,
-    fluxo_ver_extrato,
-    fluxo_adicionar_item,
-    fluxo_abrir_comanda
-)
+from utils.menu import (fluxo_listar_comandas_ativas, fluxo_cadastrar_produto, fluxo_listar_cardapio, fluxo_fechar_comanda, fluxo_ver_extrato, fluxo_adicionar_item, fluxo_abrir_comanda)
 
 def main():
     """
@@ -26,8 +18,6 @@ def main():
     carregar_cardapio(cardapio)
     carregar_pedidos(service, cardapio)
 
-    # Dicionário de ações (Mapeamento de Rotas/Opções do Menu)
-    # Evita estruturas condicionais encadeadas (if-elif) excessivas na main, tornando o código limpo e extensível.
     acoes = {
         "1": fluxo_abrir_comanda,
         "2": fluxo_adicionar_item,
@@ -46,7 +36,6 @@ def main():
             print("Encerrando Sistema...")
             break
 
-        # Roteamento dinâmico da ação selecionada
         elif opcao in acoes:
             acoes[opcao](service, cardapio)
 
