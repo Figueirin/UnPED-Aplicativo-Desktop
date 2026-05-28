@@ -109,7 +109,7 @@ classDiagram
 * O extrato completo do pedido centraliza as lógicas de formatação, cálculo de subtotal, aplicação de taxa de serviço (10%) e total geral diretamente no método mágico `__str__` da classe `Pedido`. Tanto o fluxo de ver extrato parcial (Opção 3) quanto o fluxo de fechamento (Opção 4) utilizam o método `print(pedido)` para exibir as informações unificadas, eliminando duplicações no código.
 
 ### 3. Padrão de Roteamento Pythônico (Dispatcher Pattern)
-Na `main.py`, substituímos o tradicional encadeamento de dezenas de estruturas `if-elif-else` por um **dicionário de funções** mapeadas por opção digitada:
+Na `main.py`, preferi substituír o tradicional encadeamento de dezenas de estruturas `if-elif-else` por um **dicionário de funções** mapeadas por opção digitada:
 ```python
 acoes = {
     "1": fluxo_abrir_comanda,
@@ -127,15 +127,23 @@ Isso torna o fluxo de controle extremamente elegante, modular e fácil de expand
 ---
 
 ## 💾 Persistência de Dados
-Desenvolvemos uma camada de persistência em arquivos JSON locais na pasta `data/`.
+Desenvolvi uma camada de persistência em arquivos JSON locais na pasta `data/`.
 Toda vez que uma nova comanda é aberta, um produto é lançado, ou uma conta é fechada, a persistência é ativada em segundo plano. O sistema também implementa checagem com métodos `.get()` para garantir compatibilidade caso arquivos JSON gerados em versões antigas do app sejam carregados.
 
 ---
 
 ## 🚀 Como executar o projeto
 
-Certifique-se de que possui o Python 3.10 ou superior instalado. Abra a pasta raiz do projeto no terminal e execute:
+Abra o seu terminal e execute os comandos abaixo para clonar o repositório e rodar o sistema:
 
 ```bash
+# 1. Clone o repositório
+git clone https://github.com/Figueirin/UnPED
+
+# 2. Acesse a pasta do projeto
+cd UnPED
+
+# 3. Execute o programa
 python main.py
 ```
+
