@@ -8,6 +8,11 @@ class Pedido:
         self.itens = []
 
     def adicionar_item(self, produto, qtd = 1):
+        for item in self.itens:
+            if item.produto.nome.lower() == produto.nome.lower():
+                item.quantidade += qtd
+                return
+
         novo_item = PedidoItem(produto, qtd)
         self.itens.append(novo_item)
     
@@ -32,7 +37,7 @@ class Pedido:
         for item in self.itens:
             extrato += f"`{item}\n"
         
-        extrato += "==============================================\n"
+        extrato += "========================================\n"
         extrato += f"total: R$ {self.calcular_total():.2f}"
         return extrato
 

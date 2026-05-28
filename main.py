@@ -30,7 +30,7 @@ def main():
                 sucesso = service.abrir_comanda(num, nome)
 
                 if sucesso:
-                    deseja_pedido = input("Deseja fazer um pedido? s/n").strip().lower()
+                    deseja_pedido = input("Deseja fazer um pedido? s/n: ").strip().lower()
 
                     if deseja_pedido == "s":
 
@@ -86,6 +86,9 @@ def main():
                 else:
                     cardapio.add_produto(Produto(nome, preco))
                     print(f"Produto {nome} cadastrado com sucesso")
+
+        elif opcao == '7':
+            service.listar_comandas_ativas()
 
         elif opcao == '0':
             print("Encerrado sistema...")

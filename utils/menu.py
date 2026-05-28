@@ -6,6 +6,7 @@ def exibir_menu():
     print("4- Fechar Comanda")
     print("5- Mostrar Cardapio")
     print("6- Cadastrar Produto")
+    print("7- Listar comandas abertas")
     print("0- Sair")
 
     opcao = input("Escolha uma Opcao ")
@@ -26,21 +27,29 @@ def obter_float(mensagem):
             print("Digite um numero valido")
 
 def lancar_item(pedido, cardapio):
-    print("\n=== Cardapio ===")
-    cardapio.listar_produtos()
-    nome_prod = input("Digite o nome do produto que deseja: ")
-    produto = cardapio.buscar_produto(nome_prod)
 
-    if produto:
-        qtd = obter_inteiro(f"Quantidade de {produto.nome}: ")
-        
-        if qtd <= 0:
-            print("Quantidade deve ser maior que zero")
+    while True:
+        print("\n=== Cardapio ===")
+        cardapio.listar_produtos()
+        nome_prod = input("Digite o nome do produto que deseja: ")
+        produto = cardapio.buscar_produto(nome_prod)
+
+        if produto:
+            qtd = obter_inteiro(f"Quantidade de {produto.nome}: ")
+            
+            if qtd <= 0:
+                print("Quantidade deve ser maior que zero")
+
+            else:
+                pedido.adicionar_item(produto, qtd)
+                print("Item adicionado")
 
         else:
-            pedido.adicionar_item(produto, qtd)
-            print("Item adicionado")
+            print("Produto nao encontrado")
 
-    else:
-        print("Produto nao encontrado")
-            
+        mais_itens = input("Deseja adicionar mais um item? s/n: ").strip().lower()
+
+        if mais_itens != 's':
+            break
+
+                

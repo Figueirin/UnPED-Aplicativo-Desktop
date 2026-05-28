@@ -31,3 +31,12 @@ class PedidoService:
         
         return None
 
+    def listar_comandas_ativas(self):
+        if not self.pedidos_ativos:
+            print("Nenhuma comanda aberta no momento")
+            return
+
+        print("=== Comandas Abertas ===")
+        for num_comanda, pedido in self.pedidos_ativos.items():
+            print(f"Comanda num {num_comanda} | Cliente: {pedido.cliente.nome} | Total Atual R$ {pedido.calcular_total():.2f}")
+

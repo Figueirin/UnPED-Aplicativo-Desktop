@@ -11,6 +11,6 @@ class Produto:
         }
     
     def __str__(self):
-        return (f"nome {self.nome} valor {self.preco}")
+        return (f"{self.nome} R${self.preco:.2f}")
 
     
