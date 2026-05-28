@@ -97,7 +97,7 @@ classDiagram
 
 ---
 
-## 🧠 Conceitos de OO e Engenharia de Software Aplicados
+## 🧠 Conceitos de OO aplicados ao projeto
 
 ### 1. Associação, Agregação e Composição
 * **Associação:** O `PedidoItem` possui uma associação direta a um objeto do tipo `Produto` para consultar seu preço e dados.
