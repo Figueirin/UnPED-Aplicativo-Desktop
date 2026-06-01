@@ -35,12 +35,41 @@ class App(ctk.CTk):
 
         self.sidebar_frame.grid_rowconfigure(3, weight=1)
 
+        #botao dashboard
         self.btn_dashboard = ctk.CTkButton(
             self.sidebar_frame, text="Dashboard", fg_color="transparent",
             text_color=("gray10", "gray90"), anchor="w",
             command=lambda: self.selecionar_aba("dashboard")
         )
         self.btn_dashboard.grid(row=1, column=0, padx=20, pady=5, sticky="ew")
+
+        #botao cardapio
+        self.btn_cardapio = ctk.CTkButton(
+            self.sidebar_frame, text="Cardapio", fg_color="transparent",
+            text_color=("gray10", "gray90"), anchor="w",
+            command=lambda: self.selecionar_aba("Cardapio")
+        )
+
+        self.btn_cardapio.grid(row=2, column=0, padx=20, pady=5, sticky="ew")
+
+        self.appearance_label = ctk.CTkLabel(
+            self.sidebar_frame, text="Tema",
+            anchor="w", font=ctk.CTkFont(size = 10)
+        )
+        self.appearance_label.grid(row=4, column=0, padx=0, pady=(10,2), sticky="w")
+
+        self.appearence_optionmenu = ctk.CTkOptionMenu(
+            self.sidebar_frame, values=["Dark", "Light", "System"],
+            command=self.mudar_aparencia
+        )
+        self.appearence_optionmenu.grid(row=5, column=0, padx=20, pady=(0,20), sticky="ew")
+
+    def selecionar_aba(self, nome_aba):
+        print(f"Aba selecionada: {nome_aba}")
+
+    def mudar_aparencia(self, novo_modo_aparencia):
+        ctk.set_appearance_mode(novo_modo_aparencia)
+
 
 if __name__ == "__main__":
     app = App(None, None)
