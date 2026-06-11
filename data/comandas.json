@@ -1,1 +1,26 @@
-[]
+[
+    {
+        "Comanda": 15,
+        "Cliente": "renato",
+        "Items": [
+            {
+                "produto": {
+                    "id": 11,
+                    "nome": "Carne de Sol",
+                    "preco": 159.99,
+                    "categoria": "Pratos Principais"
+                },
+                "quantidade": 1
+            },
+            {
+                "produto": {
+                    "id": 1,
+                    "nome": "Galinha Caipira",
+                    "preco": 189.99,
+                    "categoria": "Pratos Principais"
+                },
+                "quantidade": 1
+            }
+        ]
+    }
+]

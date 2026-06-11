@@ -13,7 +13,7 @@ class DashboardFrame(ctk.CTkFrame):
 
         # Cabeçalho: Título e Botão Nova Comanda
         self.header_frame = ctk.CTkFrame(self, fg_color="transparent")
-        self.header_frame.grid(row=0, column=0, fill="x", pady=(10, 20))
+        self.header_frame.grid(row=0, column=0, sticky="ew", pady=(10, 20))
         self.header_frame.grid_columnconfigure(0, weight=1)
 
         self.header_label = ctk.CTkLabel(

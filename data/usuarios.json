@@ -10,5 +10,11 @@
         "senha": "123",
         "nome": "Maria Souza",
         "cargo": "Gerente"
+    },
+    {
+        "username": "renato",
+        "senha": "1234",
+        "nome": "Renato Rodrigues",
+        "cargo": "Garcom"
     }
 ]
