@@ -14,3 +14,5 @@ Thumbs.db
 # Arquivos de dados locais (se preferir não subir as comandas salvas pro GitHub)
 data/cardapio.json
 data/pedidos.json
+data/comandas.json
+data/usuarios.json
