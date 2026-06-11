@@ -2,7 +2,7 @@ import json
 import os
 from models.produto import Produto
 from models.comanda import Comanda
-from models.usuario import Garcom, Gerente
+from models.usuario import Garcom, Gerente, Administrador
 
 # Definição dos caminhos dos arquivos JSON salvos na pasta data/
 CAMINHO_CARDAPIO = "data/cardapio.json"
@@ -113,6 +113,9 @@ def carregar_usuario():
                 
                 elif cargo == "Gerente":
                     usuarios.append(Gerente(username, senha, nome))
+
+                elif cargo == "Administrador":
+                    usuarios.append(Administrador(username, senha, nome))
 
             return usuarios
 

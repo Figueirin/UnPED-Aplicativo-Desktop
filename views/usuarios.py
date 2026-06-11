@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox
 from services.persistencia import carregar_usuario, salvar_usuario
-from models.usuario import Garcom, Gerente
+from models.usuario import Garcom, Gerente, Administrador
 
 class UsuariosFrame(ctk.CTkFrame):
     def __init__(self, master, app_instance):
@@ -45,7 +45,7 @@ class UsuariosFrame(ctk.CTkFrame):
         # Campo Cargo
         self.lbl_cargo = ctk.CTkLabel(self.form_frame, text="Cargo / Função", font=ctk.CTkFont(size=12))
         self.lbl_cargo.pack(anchor="w", padx=20, pady=(10, 2))
-        self.option_cargo = ctk.CTkOptionMenu(self.form_frame, values=["Garcom", "Gerente"])
+        self.option_cargo = ctk.CTkOptionMenu(self.form_frame, values=["Garcom", "Gerente", "Administrador"])
         self.option_cargo.pack(padx=20, pady=(0, 20), fill="x")
 
         # Botão Salvar
@@ -95,8 +95,8 @@ class UsuariosFrame(ctk.CTkFrame):
             lbl_info.pack(side="left", padx=10, pady=10)
 
             # Botão de Remoção com base na regra de negócio
-            # Se for Gerente (outro administrador ou ele próprio), impede a remoção desabilitando o botão
-            if u.cargo == "Gerente":
+            # Se for Administrador, impede a remoção desabilitando o botão
+            if u.cargo == "Administrador":
                 btn_remover = ctk.CTkButton(
                     user_card, text="Remover", fg_color="gray", state="disabled", width=80
                 )
@@ -130,8 +130,10 @@ class UsuariosFrame(ctk.CTkFrame):
         # Instancia e adiciona o usuário
         if cargo == "Garcom":
             novo_usuario = Garcom(username, senha, nome)
-        else:
+        elif cargo == "Gerente":
             novo_usuario = Gerente(username, senha, nome)
+        elif cargo == "Administrador":
+            novo_usuario = Administrador(username, senha, nome)
 
         self.usuarios.append(novo_usuario)
         salvar_usuario(self.usuarios)

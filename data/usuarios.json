@@ -16,5 +16,11 @@
         "senha": "1234",
         "nome": "Renato Rodrigues",
         "cargo": "Garcom"
+    },
+    {
+        "username": "admin",
+        "senha": "admin",
+        "nome": "Admin Geral",
+        "cargo": "Administrador"
     }
 ]

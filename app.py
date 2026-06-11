@@ -62,7 +62,7 @@ class App(ctk.CTk):
         )
         self.btn_cardapio.grid(row=3, column=0, padx=20, pady=5, sticky="ew")
 
-        # Botão: Usuários (Apenas Gerente poderá interagir)
+        # Botão: Usuários (Apenas Administrador poderá interagir)
         self.btn_usuarios = ctk.CTkButton(
             self.sidebar_frame, text="Usuários", fg_color="transparent",
             text_color=("gray10", "gray90"), anchor="w",
@@ -73,6 +73,7 @@ class App(ctk.CTk):
         # Restrição de Acesso Baseada em Cargo
         if self.usuario.cargo != "Gerente":
             self.btn_cardapio.configure(state="disabled")
+        if self.usuario.cargo != "Administrador":
             self.btn_usuarios.configure(state="disabled")
 
         # Configura a "mola" da sidebar na linha 5 para empurrar o rodapé de temas para baixo
@@ -139,7 +140,7 @@ class App(ctk.CTk):
             self.frame_cardapio.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
             self.btn_cardapio.configure(fg_color="#1f6aa5", text_color="white")
             
-        elif nome_aba == "usuarios" and self.usuario.cargo == "Gerente":
+        elif nome_aba == "usuarios" and self.usuario.cargo == "Administrador":
             self.frame_usuarios.atualizar_lista()
             self.frame_usuarios.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
             self.btn_usuarios.configure(fg_color="#1f6aa5", text_color="white")

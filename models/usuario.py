@@ -34,3 +34,11 @@ class Gerente(Usuario):
     def __init__(self, username, senha, nome):
 
         super().__init__(username, senha, nome, "Gerente")
+        
+class Administrador(Usuario):
+    """
+    classe filha de Usuario - Ja define o colaborador como Administrador
+    """
+    def __init__(self, username, senha, nome):
+
+        super().__init__(username, senha, nome, "Administrador")
