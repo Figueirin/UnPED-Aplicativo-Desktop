@@ -33,6 +33,5 @@ class Produto:
     def __str__(self):
         """
         Retorna a representação textual formatada do produto.
-        Exemplo de saída: [1] | Café | R$4.50
         """
         return f"[{self.id}] | {self.nome} | R${self.preco:.2f}"

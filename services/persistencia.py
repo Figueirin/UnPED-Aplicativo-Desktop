@@ -1,11 +1,11 @@
 import json
 import os
 from models.produto import Produto
-from models.pedido import Pedido
+from models.comanda import Comanda
 
 # Definição dos caminhos dos arquivos JSON salvos na pasta data/
 CAMINHO_CARDAPIO = "data/cardapio.json"
-CAMINHO_PEDIDOS = "data/pedidos.json"
+CAMINHO_COMANDAS = "data/comandas.json"
 
 # Garante que a pasta data/ exista antes de qualquer operação de leitura/escrita
 os.makedirs("data", exist_ok=True)
@@ -31,7 +31,6 @@ def carregar_cardapio(cardapio):
         with open(CAMINHO_CARDAPIO, "r", encoding="utf-8") as f:
             dados = json.load(f)
             for item in dados:
-                # O método .get garante compatibilidade caso falte alguma propriedade no arquivo antigo
                 id_prod = item.get("id", len(cardapio.produtos) + 1)
                 categoria = item.get("categoria", "Geral")
                 
@@ -42,37 +41,37 @@ def carregar_cardapio(cardapio):
         # Ignora erros de leitura ou arquivo vazio para não quebrar a inicialização do programa
         pass
 
-def salvar_pedidos(pedidos_ativos):
+def salvar_comandas(comandas_ativas):
     """
-    Salva a lista de comandas abertas ativas na memória no arquivo de pedidos JSON.
+    Salva a lista de comandas abertas ativas na memória no arquivo de comandas JSON.
     """
-    dados = [pedido.to_dict() for pedido in pedidos_ativos.values()]
-    with open(CAMINHO_PEDIDOS, "w", encoding="utf-8") as f:
+    dados = [comanda.to_dict() for comanda in comandas_ativas.values()]
+    with open(CAMINHO_COMANDAS, "w", encoding="utf-8") as f:
         json.dump(dados, f, indent=4, ensure_ascii=False)
 
-def carregar_pedidos(service, cardapio):
+def carregar_comandas(service, cardapio):
     """
     Carrega as comandas ativas salvas no arquivo JSON de volta para a memória RAM.
-    Reconstrói os relacionamentos (Objetos Clientes, Pedidos e seus respectivos PedidosItens associados).
+    Reconstrói os relacionamentos (Comandas e seus respectivos ItemComanda associados).
     """
-    if not os.path.exists(CAMINHO_PEDIDOS):
+    if not os.path.exists(CAMINHO_COMANDAS):
         return
 
     try:
-        with open(CAMINHO_PEDIDOS, "r", encoding="utf-8") as f:
+        with open(CAMINHO_COMANDAS, "r", encoding="utf-8") as f:
             dados = json.load(f)
 
-            for item_pedido in dados:
-                num = item_pedido["Comanda"]
-                nome_cliente = item_pedido["Cliente"]
+            for item_comanda in dados:
+                num = item_comanda["Comanda"]
+                nome_cliente = item_comanda["Cliente"]
 
                 # 1. Abre novamente a comanda na memória RAM
                 service.abrir_comanda(num, nome_cliente)
-                pedido = service.buscar_comandas(num)
+                comanda = service.buscar_comanda(num)
 
                 # 2. Se a comanda abriu com sucesso, reconstrói seus itens de consumo
-                if pedido:
-                    for item in item_pedido["Items"]:
+                if comanda:
+                    for item in item_comanda["Items"]:
                         nome_prod = item["produto"]["nome"]
                         qtd = item["quantidade"]
                         # Busca o produto correspondente no cardápio carregado
@@ -80,7 +79,7 @@ def carregar_pedidos(service, cardapio):
 
                         if produto:
                             # Re-vincula o produto e quantidade à comanda
-                            pedido.adicionar_item(produto, qtd)
+                            comanda.adicionar_item(produto, qtd)
     except (json.JSONDecodeError, FileNotFoundError, UnicodeDecodeError, KeyError):
         # Passa reto em caso de arquivo vazio ou corrompido
         pass

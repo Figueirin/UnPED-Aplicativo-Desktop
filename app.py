@@ -1,6 +1,6 @@
 import customtkinter as ctk
 
-#from views.dashboard import DashboardFrame
+from views.dashboard import DashboardFrame
 #from views.detalhe_pedido import DetalhePedidoFrame
 #from views.cardapio import CardapioFrame
 

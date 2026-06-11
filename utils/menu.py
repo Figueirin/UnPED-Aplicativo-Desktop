@@ -1,5 +1,5 @@
 from models.produto import Produto
-from services.persistencia import salvar_cardapio, salvar_pedidos
+from services.persistencia import salvar_cardapio, salvar_comandas
 
 def exibir_menu():
     """
@@ -43,7 +43,7 @@ def obter_float(mensagem):
         except ValueError:
             print("Erro: Digite um preço/número decimal válido!")
 
-def lancar_item(pedido, cardapio):
+def lancar_item(comanda, cardapio):
     """
     Loop interativo que permite ao garçom adicionar vários itens seguidos à comanda,
     sem a necessidade de retornar ao menu principal do sistema a cada adição.
@@ -61,7 +61,7 @@ def lancar_item(pedido, cardapio):
             if qtd <= 0:
                 print("Erro: A quantidade deve ser maior que zero!")
             else:
-                pedido.adicionar_item(produto, qtd)
+                comanda.adicionar_item(produto, qtd)
                 print(f"{qtd}x {produto.nome} adicionado(s) com sucesso!")
         else:
             print("Produto não encontrado no cardápio!")
@@ -87,37 +87,37 @@ def fluxo_abrir_comanda(service, cardapio):
 
         if sucesso:
             # Salva o estado atualizado das comandas ativas no JSON
-            salvar_pedidos(service.pedidos_ativos)
+            salvar_comandas(service.comandas_ativas)
             deseja_pedido = input("Deseja fazer mais algum pedido? s/n: ").strip().lower()
 
             if deseja_pedido == 's':
-                pedido = service.buscar_comandas(num)
-                lancar_item(pedido, cardapio)
-                salvar_pedidos(service.pedidos_ativos)
+                comanda = service.buscar_comanda(num)
+                lancar_item(comanda, cardapio)
+                salvar_comandas(service.comandas_ativas)
 
 def fluxo_adicionar_item(service, cardapio):
     """
     Ação do menu: Localiza uma comanda ativa e lança um ou mais itens nela.
     """
     num = obter_inteiro("Numero da Comanda: ")
-    pedido = service.buscar_comandas(num)
+    comanda = service.buscar_comanda(num)
 
-    if pedido:
-        lancar_item(pedido, cardapio)
-        salvar_pedidos(service.pedidos_ativos)
+    if comanda:
+        lancar_item(comanda, cardapio)
+        salvar_comandas(service.comandas_ativas)
     else:
         print("Comanda nao encontrada")
 
 def fluxo_ver_extrato(service, cardapio):
     """
     Ação do menu: Imprime o extrato de consumo atual de uma comanda na tela.
-    A formatação de exibição é delegada para o método __str__ da classe Pedido.
+    A formatação de exibição é delegada para o método __str__ da classe Comanda.
     """
     num = obter_inteiro("Numero da comanda: ")
-    pedido = service.buscar_comandas(num)
+    comanda = service.buscar_comanda(num)
 
-    if pedido:
-        print("\n" + str(pedido))
+    if comanda:
+        print("\n" + str(comanda))
     else:
         print("Comanda nao encontrada")
 
@@ -129,22 +129,22 @@ def fluxo_fechar_comanda(service, cardapio):
     """
     num = obter_inteiro("Numero da comanda para fechamento: ")
     # Pop da comanda na memória de ativos (remove do sistema)
-    pedido = service.fechar_comanda(num)
+    comanda = service.fechar_comanda(num)
 
-    if not pedido:
+    if not comanda:
         print("\n === Comanda nao encontrada! ===")
         return 
 
     # Cálculos financeiros da conta
-    subtotal = pedido.calcular_total()
+    subtotal = comanda.calcular_total()
     taxa = subtotal * 0.10
     total_geral = subtotal + taxa
 
     # Exibição do extrato de fechamento formatado
-    print(f"\n === Fechamento de comanda {pedido.comanda} ===")
-    print(f"Cliente: {pedido.cliente.nome}")
+    print(f"\n === Fechamento de comanda {comanda.numero} ===")
+    print(f"Cliente: {comanda.cliente_nome}")
     print("========================================")
-    for item in pedido.itens:
+    for item in comanda.itens:
         print(item)
     print("========================================")
     print(f"Subtotal: R$ {subtotal:.2f}")
@@ -166,7 +166,7 @@ def fluxo_fechar_comanda(service, cardapio):
         print(f"Total pago ate agora: R$ {pago_acumulado:.2f}")
 
     # Atualiza o arquivo JSON em disco removendo a comanda quitada
-    salvar_pedidos(service.pedidos_ativos)
+    salvar_comandas(service.comandas_ativas)
 
     # Exibição dos resultados finais de encerramento
     troco = pago_acumulado - total_geral
@@ -198,7 +198,6 @@ def fluxo_cadastrar_produto(service, cardapio):
         if p.nome.lower() == nome_low:
             print(f"Erro: O produto '{p.nome}' já está cadastrado com o ID {p.id}!")
             return
-
 
     preco = obter_float("Preço: ")
     if preco <= 0:

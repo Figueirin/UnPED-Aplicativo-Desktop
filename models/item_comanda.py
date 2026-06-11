@@ -1,22 +1,21 @@
 from models.produto import Produto
 
-class PedidoItem:
+class ItemComanda:
     """
-    Representa uma linha de consumo do pedido.
+    Representa uma linha de consumo da comanda.
     Associa um objeto Produto a uma quantidade comprada.
     """
-    def __init__(self, produto, qtd = 1):
-        # Associação de Objetos: guardamos o objeto Produto completo
+    def __init__(self, produto, qtd=1):
         self.produto = produto
         self.quantidade = qtd
 
     def calc_subtotal(self):
-        # Delegação: o PedidoItem delega o preço ao produto e multiplica pela quantidade
+        # Delegação: o ItemComanda delega o preço ao produto e multiplica pela quantidade
         return self.produto.preco * self.quantidade
 
     def to_dict(self):
-        # Serialização: converte a linha do pedido em dicionário para salvar no JSON
-        return{
+        # Serialização: converte a linha em dicionário para salvar no JSON
+        return {
             "produto": self.produto.to_dict(),
             "quantidade": self.quantidade
         }

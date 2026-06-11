@@ -1,7 +1,7 @@
 from models.cardapio import Cardapio
-from services.pedido_service import PedidoService
+from services.comanda_service import ComandaService
 from utils.menu import exibir_menu
-from services.persistencia import carregar_cardapio, carregar_pedidos
+from services.persistencia import carregar_cardapio, carregar_comandas
 from utils.menu import (fluxo_listar_comandas_ativas, fluxo_cadastrar_produto, fluxo_listar_cardapio, fluxo_fechar_comanda, fluxo_ver_extrato, fluxo_adicionar_item, fluxo_abrir_comanda)
 
 def main():
@@ -11,12 +11,12 @@ def main():
     e gerenciar a execução do loop principal através do dicionário de ações mapeadas.
     """
     # Instanciamos os gerenciadores de estado globais (Serviços e Cardápio do estabelecimento)
-    service = PedidoService()
+    service = ComandaService()
     cardapio = Cardapio()
 
     # Recupera o cardápio e as comandas ativas salvas nos arquivos JSON correspondentes
     carregar_cardapio(cardapio)
-    carregar_pedidos(service, cardapio)
+    carregar_comandas(service, cardapio)
 
     acoes = {
         "1": fluxo_abrir_comanda,
