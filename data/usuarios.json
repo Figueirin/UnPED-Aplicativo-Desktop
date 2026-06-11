@@ -1,17 +1,5 @@
 [
     {
-        "username": "garcom1",
-        "senha": "123",
-        "nome": "João Silva",
-        "cargo": "Garcom"
-    },
-    {
-        "username": "gerente1",
-        "senha": "123",
-        "nome": "Maria Souza",
-        "cargo": "Gerente"
-    },
-    {
         "username": "renato",
         "senha": "1234",
         "nome": "Renato Rodrigues",
@@ -22,5 +10,11 @@
         "senha": "admin",
         "nome": "Admin Geral",
         "cargo": "Administrador"
+    },
+    {
+        "username": "wesley",
+        "senha": "123",
+        "nome": "Wesley Batista",
+        "cargo": "Gerente"
     }
 ]

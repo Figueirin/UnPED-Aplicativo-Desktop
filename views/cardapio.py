@@ -87,13 +87,34 @@ class CardapioFrame(ctk.CTkFrame):
                 )
                 lbl_prod_info.pack(side="left", padx=15, pady=8)
 
+                # Botão de remoção (Lado Direito)
+                btn_remover = ctk.CTkButton(
+                    prod_card, text="Remover", fg_color="#d32f2f", hover_color="#b71c1c", width=70, height=24,
+                    command=lambda pid=p.id: self.remover_produto(pid)
+                )
+                btn_remover.pack(side="right", padx=15, pady=8)
+
                 lbl_prod_preco = ctk.CTkLabel(
                     prod_card,
                     text=f"R$ {p.preco:.2f}",
                     font=ctk.CTkFont(size=12),
                     anchor="e"
                 )
-                lbl_prod_preco.pack(side="right", padx=15, pady=8)
+                lbl_prod_preco.pack(side="right", padx=5, pady=8)
+
+    def remover_produto(self, produto_id):
+        produto = self.app.cardapio.buscar_produto(produto_id)
+        if not produto:
+            return
+
+        if not messagebox.askyesno("Confirmar", f"Tem certeza que deseja remover o produto '{produto.nome}' do cardápio?"):
+            return
+
+        self.app.cardapio.produtos = [p for p in self.app.cardapio.produtos if p.id != produto_id]
+        salvar_cardapio(self.app.cardapio)
+
+        messagebox.showinfo("Sucesso", f"Produto '{produto.nome}' removido com sucesso!")
+        self.atualizar_lista()
 
     def abrir_dialogo_cadastro(self):
         # Criar janela Toplevel para o cadastro

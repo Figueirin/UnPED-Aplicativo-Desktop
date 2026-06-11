@@ -1,17 +1,1 @@
-[
-    {
-        "Comanda": 15,
-        "Cliente": "JULIA",
-        "Items": [
-            {
-                "produto": {
-                    "id": 9,
-                    "nome": "Agua Mineral",
-                    "preco": 3.99,
-                    "categoria": "Bebidas"
-                },
-                "quantidade": 3
-            }
-        ]
-    }
-]
+[]

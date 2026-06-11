@@ -64,9 +64,11 @@ class FecharComandaFrame(ctk.CTkFrame):
         self.lbl_falta_troco = ctk.CTkLabel(
             self.checkout_panel, text="Falta pagar: R$ 0.00",
             font=ctk.CTkFont(size=14, weight="bold"),
-            text_color="#d32f2f"
+            text_color="#d32f2f",
+            cursor="hand2"
         )
         self.lbl_falta_troco.pack(anchor="w", padx=15, pady=(0, 15))
+        self.lbl_falta_troco.bind("<Button-1>", self.preencher_valor_restante)
 
         # Entrada de Valor Pago
         self.lbl_valor_pago = ctk.CTkLabel(self.checkout_panel, text="Valor do Pagamento (R$)", font=ctk.CTkFont(size=12))
@@ -170,3 +172,15 @@ class FecharComandaFrame(ctk.CTkFrame):
         messagebox.showinfo("Sucesso", f"Comanda #{self.comanda.numero} encerrada com sucesso!", parent=self)
         self.comanda = None
         self.app.selecionar_aba("dashboard")
+
+    def preencher_valor_restante(self, event=None):
+        if not self.comanda:
+            return
+        subtotal = self.comanda.calcular_total()
+        taxa = subtotal * 0.10
+        total_geral = subtotal + taxa
+        falta = total_geral - self.pago_acumulado
+        
+        if falta > 0:
+            self.entry_pagamento.delete(0, "end")
+            self.entry_pagamento.insert(0, f"{falta:.2f}")
