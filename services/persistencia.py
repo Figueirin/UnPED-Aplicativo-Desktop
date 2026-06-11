@@ -118,4 +118,12 @@ def carregar_usuario():
 
     except (json.JSONDecodeError, FileNotFoundError, KeyError):
         return []
-    
+
+def salvar_usuario(usuarios):
+    """
+    Grava de forma persistente todos os usuários (Garcom e Gerente) de volta no arquivo JSON.
+    """
+    caminho = "data/usuarios.json"
+    dados = [u.to_dict() for u in usuarios]
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(dados, f, indent=4, ensure_ascii=False)
