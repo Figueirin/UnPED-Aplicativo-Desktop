@@ -2,6 +2,7 @@ import json
 import os
 from models.produto import Produto
 from models.comanda import Comanda
+from models.usuario import Garcom, Gerente
 
 # Definição dos caminhos dos arquivos JSON salvos na pasta data/
 CAMINHO_CARDAPIO = "data/cardapio.json"
@@ -83,3 +84,38 @@ def carregar_comandas(service, cardapio):
     except (json.JSONDecodeError, FileNotFoundError, UnicodeDecodeError, KeyError):
         # Passa reto em caso de arquivo vazio ou corrompido
         pass
+
+def carregar_usuario():
+    
+    """
+    Lê o arquivo de usuários JSON e cria as instâncias de Garcom ou Gerente correspondentes.
+    Demonstra a instanciação polimórfica baseada em dados.
+    """
+
+    caminho = "data/usuarios.json"
+
+    if not os.path.exists(caminho):
+        return []
+
+    try:
+        with open(caminho, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+            usuarios = []
+
+            for item in dados:
+                username = item["username"]
+                nome = item["nome"]
+                senha = item["senha"]
+                cargo = item["cargo"]
+
+                if cargo == "Garcom":
+                    usuarios.append(Garcom(username, senha, nome))
+                
+                elif cargo == "Gerente":
+                    usuarios.append(Gerente(username, senha, nome))
+
+            return usuarios
+
+    except (json.JSONDecodeError, FileNotFoundError, KeyError):
+        return []
+    
