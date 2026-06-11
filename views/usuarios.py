@@ -39,8 +39,19 @@ class UsuariosFrame(ctk.CTkFrame):
         # Campo Senha
         self.lbl_senha = ctk.CTkLabel(self.form_frame, text="Senha de Acesso", font=ctk.CTkFont(size=12))
         self.lbl_senha.pack(anchor="w", padx=20, pady=(10, 2))
-        self.entry_senha = ctk.CTkEntry(self.form_frame, placeholder_text="Mínimo 3 caracteres", show="*", width=220)
-        self.entry_senha.pack(padx=20, pady=(0, 10), fill="x")
+
+        self.senha_container = ctk.CTkFrame(self.form_frame, fg_color="transparent")
+        self.senha_container.pack(fill="x", padx=20, pady=(0, 10))
+
+        self.entry_senha = ctk.CTkEntry(self.senha_container, placeholder_text="Mínimo 3 caracteres", show="*", width=170)
+        self.entry_senha.pack(side="left", fill="x", expand=True)
+
+        self.btn_show_senha = ctk.CTkButton(
+            self.senha_container, text="👁", width=30, height=28, fg_color="transparent",
+            text_color=("gray10", "gray90"), hover_color=("gray80", "gray30"),
+            command=self.toggle_senha
+        )
+        self.btn_show_senha.pack(side="right", padx=(5, 0))
 
         # Campo Cargo
         self.lbl_cargo = ctk.CTkLabel(self.form_frame, text="Cargo / Função", font=ctk.CTkFont(size=12))
@@ -157,3 +168,11 @@ class UsuariosFrame(ctk.CTkFrame):
 
         messagebox.showinfo("Sucesso", "Usuário removido com sucesso!")
         self.atualizar_lista()
+
+    def toggle_senha(self):
+        if self.entry_senha.cget("show") == "*":
+            self.entry_senha.configure(show="")
+            self.btn_show_senha.configure(text="🔒")
+        else:
+            self.entry_senha.configure(show="*")
+            self.btn_show_senha.configure(text="👁")
