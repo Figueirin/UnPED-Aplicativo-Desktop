@@ -1,25 +1,16 @@
 [
     {
         "Comanda": 15,
-        "Cliente": "renato",
+        "Cliente": "JULIA",
         "Items": [
             {
                 "produto": {
-                    "id": 11,
-                    "nome": "Carne de Sol",
-                    "preco": 159.99,
-                    "categoria": "Pratos Principais"
+                    "id": 9,
+                    "nome": "Agua Mineral",
+                    "preco": 3.99,
+                    "categoria": "Bebidas"
                 },
-                "quantidade": 1
-            },
-            {
-                "produto": {
-                    "id": 1,
-                    "nome": "Galinha Caipira",
-                    "preco": 189.99,
-                    "categoria": "Pratos Principais"
-                },
-                "quantidade": 1
+                "quantidade": 3
             }
         ]
     }

@@ -5,6 +5,7 @@ from views.dashboard import DashboardFrame
 from views.detalhe_pedido import DetalhePedidoFrame
 from views.cardapio import CardapioFrame
 from views.usuarios import UsuariosFrame
+from views.fechar_comanda import FecharComandaFrame
 
 class App(ctk.CTk):
     """
@@ -71,7 +72,7 @@ class App(ctk.CTk):
         self.btn_usuarios.grid(row=4, column=0, padx=20, pady=5, sticky="ew")
 
         # Restrição de Acesso Baseada em Cargo
-        if self.usuario.cargo != "Gerente":
+        if self.usuario.cargo not in ["Gerente", "Administrador"]:
             self.btn_cardapio.configure(state="disabled")
         if self.usuario.cargo != "Administrador":
             self.btn_usuarios.configure(state="disabled")
@@ -98,6 +99,7 @@ class App(ctk.CTk):
         self.frame_detalhes = DetalhePedidoFrame(self, self)
         self.frame_cardapio = CardapioFrame(self, self)
         self.frame_usuarios = UsuariosFrame(self, self)
+        self.frame_fechamento = FecharComandaFrame(self, self)
 
         # Mostrar tela inicial (Dashboard)
         self.frame_dashboard.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
@@ -108,10 +110,27 @@ class App(ctk.CTk):
         self.frame_dashboard.grid_forget()
         self.frame_cardapio.grid_forget()
         self.frame_usuarios.grid_forget()
+        self.frame_fechamento.grid_forget()
 
         # Carregar e exibir detalhes da comanda
         self.frame_detalhes.carregar_comanda(comanda_numero)
         self.frame_detalhes.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
+
+        # Atualizar cores do menu (nenhuma aba lateral está ativa)
+        self.btn_dashboard.configure(fg_color="transparent", text_color=("gray10", "gray90"))
+        self.btn_cardapio.configure(fg_color="transparent", text_color=("gray10", "gray90"))
+        self.btn_usuarios.configure(fg_color="transparent", text_color=("gray10", "gray90"))
+
+    def ir_para_fechamento(self, comanda_numero):
+        # Esconder todas as telas
+        self.frame_dashboard.grid_forget()
+        self.frame_detalhes.grid_forget()
+        self.frame_cardapio.grid_forget()
+        self.frame_usuarios.grid_forget()
+
+        # Carregar e exibir tela de fechamento
+        self.frame_fechamento.carregar_comanda(comanda_numero)
+        self.frame_fechamento.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
 
         # Atualizar cores do menu (nenhuma aba lateral está ativa)
         self.btn_dashboard.configure(fg_color="transparent", text_color=("gray10", "gray90"))
@@ -124,6 +143,7 @@ class App(ctk.CTk):
         self.frame_detalhes.grid_forget()
         self.frame_cardapio.grid_forget()
         self.frame_usuarios.grid_forget()
+        self.frame_fechamento.grid_forget()
 
         # Resetar estilos de botões da sidebar
         self.btn_dashboard.configure(fg_color="transparent", text_color=("gray10", "gray90"))
@@ -135,7 +155,7 @@ class App(ctk.CTk):
             self.frame_dashboard.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
             self.btn_dashboard.configure(fg_color="#1f6aa5", text_color="white")
             
-        elif nome_aba == "cardapio" and self.usuario.cargo == "Gerente":
+        elif nome_aba == "cardapio" and self.usuario.cargo in ["Gerente", "Administrador"]:
             self.frame_cardapio.atualizar_lista()
             self.frame_cardapio.grid(row=0, column=1, sticky="nsew", padx=20, pady=20)
             self.btn_cardapio.configure(fg_color="#1f6aa5", text_color="white")

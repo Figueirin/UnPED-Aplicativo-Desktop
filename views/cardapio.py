@@ -8,62 +8,33 @@ class CardapioFrame(ctk.CTkFrame):
         super().__init__(master, fg_color="transparent")
         self.app = app_instance
 
-        # Configurar layout grid (1 linha, 2 colunas)
-        # Se for Gerente, divide a tela entre o formulário de cadastro e a lista.
-        # Se for Garçom, o cardápio ocupa a tela inteira (embora a aba esteja bloqueada na sidebar, caso venha a acessar).
-        self.grid_rowconfigure(0, weight=1)
+        # Layout principal (1 coluna, grid configurado)
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=2)
+        self.grid_rowconfigure(1, weight=1)
 
-        # Lado Esquerdo: Formulário de Cadastro de Produto (Apenas para Gerente)
-        self.form_frame = ctk.CTkFrame(self)
-        self.form_frame.grid(row=0, column=0, padx=(0, 10), pady=0, sticky="nsew")
+        # Cabeçalho: Título e Botão
+        self.header_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.header_frame.grid(row=0, column=0, sticky="ew", pady=(10, 20))
+        self.header_frame.grid_columnconfigure(0, weight=1)
 
-        self.lbl_titulo_form = ctk.CTkLabel(
-            self.form_frame, text="Cadastrar Novo Produto",
-            font=ctk.CTkFont(family="Outfit", size=18, weight="bold"),
+        self.header_label = ctk.CTkLabel(
+            self.header_frame, text="Cardápio do Estabelecimento",
+            font=ctk.CTkFont(family="Outfit", size=22, weight="bold"),
             text_color="#1f6aa5"
         )
-        self.lbl_titulo_form.pack(pady=20, padx=20, anchor="w")
+        self.header_label.grid(row=0, column=0, sticky="w")
 
-        # Nome do Produto
-        self.lbl_nome = ctk.CTkLabel(self.form_frame, text="Nome do Produto", font=ctk.CTkFont(size=12))
-        self.lbl_nome.pack(anchor="w", padx=20, pady=(10, 2))
-        self.entry_nome = ctk.CTkEntry(self.form_frame, placeholder_text="Ex: Suco de Laranja", width=220)
-        self.entry_nome.pack(padx=20, pady=(0, 10), fill="x")
-
-        # Preço
-        self.lbl_preco = ctk.CTkLabel(self.form_frame, text="Preço Unitário (R$)", font=ctk.CTkFont(size=12))
-        self.lbl_preco.pack(anchor="w", padx=20, pady=(10, 2))
-        self.entry_preco = ctk.CTkEntry(self.form_frame, placeholder_text="Ex: 8.50", width=220)
-        self.entry_preco.pack(padx=20, pady=(0, 10), fill="x")
-
-        # Categoria
-        self.lbl_categoria = ctk.CTkLabel(self.form_frame, text="Categoria", font=ctk.CTkFont(size=12))
-        self.lbl_categoria.pack(anchor="w", padx=20, pady=(10, 2))
-        self.entry_categoria = ctk.CTkEntry(self.form_frame, placeholder_text="Ex: Bebidas", width=220)
-        self.entry_categoria.pack(padx=20, pady=(0, 20), fill="x")
-
-        # Botão Cadastrar
-        self.btn_cadastrar = ctk.CTkButton(
-            self.form_frame, text="Cadastrar Produto", height=35,
-            command=self.cadastrar_produto
+        # Botão para cadastrar produto (Visível/Habilitado para Gerente e Administrador)
+        self.btn_novo_produto = ctk.CTkButton(
+            self.header_frame, text="+ Cadastrar Produto",
+            font=ctk.CTkFont(weight="bold"),
+            command=self.abrir_dialogo_cadastro
         )
-        self.btn_cadastrar.pack(padx=20, pady=(0, 20), fill="x")
+        self.btn_novo_produto.grid(row=0, column=1, sticky="e")
 
-        # Lado Direito: Visualização do Cardápio
-        self.list_frame = ctk.CTkFrame(self)
-        self.list_frame.grid(row=0, column=1, padx=(10, 0), pady=0, sticky="nsew")
-
-        self.lbl_titulo_lista = ctk.CTkLabel(
-            self.list_frame, text="Cardápio do Estabelecimento",
-            font=ctk.CTkFont(family="Outfit", size=18, weight="bold"),
-            text_color="#1f6aa5"
-        )
-        self.lbl_titulo_lista.pack(pady=20, padx=20, anchor="w")
-
-        self.scroll_frame = ctk.CTkScrollableFrame(self.list_frame, label_text="Produtos Disponíveis")
-        self.scroll_frame.pack(fill="both", expand=True, padx=20, pady=(0, 20))
+        # Scroll Frame ocupando toda a área útil
+        self.scroll_frame = ctk.CTkScrollableFrame(self)
+        self.scroll_frame.grid(row=1, column=0, sticky="nsew")
 
         self.atualizar_lista()
 
@@ -71,6 +42,15 @@ class CardapioFrame(ctk.CTkFrame):
         # Limpar widgets do scroll frame
         for widget in self.scroll_frame.winfo_children():
             widget.destroy()
+
+        if not self.app.cardapio.produtos:
+            lbl_vazio = ctk.CTkLabel(
+                self.scroll_frame, text="Nenhum produto cadastrado no cardápio.\nClique no botão acima para cadastrar o primeiro!",
+                font=ctk.CTkFont(size=14, slant="italic"),
+                text_color="gray"
+            )
+            lbl_vazio.pack(pady=50)
+            return
 
         # Agrupar produtos por categoria
         categorias = {}
@@ -80,7 +60,7 @@ class CardapioFrame(ctk.CTkFrame):
                 categorias[cat] = []
             categorias[cat].append(produto)
 
-        # Renderizar categorias e itens de forma elegante
+        # Renderizar categorias e itens
         for categoria, produtos in categorias.items():
             # Rótulo da Categoria
             cat_label = ctk.CTkLabel(
@@ -115,46 +95,105 @@ class CardapioFrame(ctk.CTkFrame):
                 )
                 lbl_prod_preco.pack(side="right", padx=15, pady=8)
 
-    def cadastrar_produto(self):
-        nome = self.entry_nome.get().strip()
-        preco_str = self.entry_preco.get().strip()
-        categoria = self.entry_categoria.get().strip()
+    def abrir_dialogo_cadastro(self):
+        # Criar janela Toplevel para o cadastro
+        dialog = ctk.CTkToplevel(self)
+        dialog.title("Cadastrar Produto")
+        dialog.geometry("380x420")
+        dialog.resizable(False, False)
+        dialog.grab_set()  # Torna modal
+        dialog.focus_force()
 
-        if not nome or not preco_str:
-            messagebox.showerror("Erro", "Nome e Preço são obrigatórios!")
-            return
+        lbl_titulo = ctk.CTkLabel(
+            dialog, text="Cadastrar Novo Produto",
+            font=ctk.CTkFont(family="Outfit", size=18, weight="bold"),
+            text_color="#1f6aa5"
+        )
+        lbl_titulo.pack(pady=(20, 15))
 
-        # Validar Preço
-        try:
-            preco = float(preco_str)
-            if preco <= 0:
-                raise ValueError
-        except ValueError:
-            messagebox.showerror("Erro", "Digite um preço decimal válido e maior que zero!")
-            return
+        # Campo Nome
+        lbl_nome = ctk.CTkLabel(dialog, text="Nome do Produto", font=ctk.CTkFont(size=12))
+        lbl_nome.pack(anchor="w", padx=30)
+        entry_nome = ctk.CTkEntry(dialog, placeholder_text="Ex: Suco de Uva", width=320)
+        entry_nome.pack(padx=30, pady=(0, 10))
 
-        if not categoria:
-            categoria = "Geral"
+        # Campo Preço
+        lbl_preco = ctk.CTkLabel(dialog, text="Preço Unitário (R$)", font=ctk.CTkFont(size=12))
+        lbl_preco.pack(anchor="w", padx=30)
+        entry_preco = ctk.CTkEntry(dialog, placeholder_text="Ex: 9.90", width=320)
+        entry_preco.pack(padx=30, pady=(0, 10))
 
-        # Validar Duplicatas de nome
-        nome_low = nome.lower()
-        for p in self.app.cardapio.produtos:
-            if p.nome.lower() == nome_low:
-                messagebox.showerror("Erro", f"O produto '{nome}' já está cadastrado!")
+        # Obter categorias existentes de forma única
+        categorias_existentes = sorted(list(set(p.categoria for p in self.app.cardapio.produtos)))
+        opcoes_dropdown = categorias_existentes + ["Criar nova categoria..."]
+
+        # Campo Categoria
+        lbl_cat = ctk.CTkLabel(dialog, text="Categoria", font=ctk.CTkFont(size=12))
+        lbl_cat.pack(anchor="w", padx=30)
+
+        # Entrada de Texto adicional para nova categoria (inicialmente invisível)
+        entry_nova_cat = ctk.CTkEntry(dialog, placeholder_text="Digite a nova categoria...", width=320)
+
+        def ao_selecionar_categoria(opcao):
+            if opcao == "Criar nova categoria...":
+                entry_nova_cat.pack(padx=30, pady=(5, 10), before=btn_cadastrar)
+            else:
+                entry_nova_cat.pack_forget()
+
+        # Dropdown
+        dropdown_cat = ctk.CTkOptionMenu(
+            dialog, values=opcoes_dropdown, width=320, command=ao_selecionar_categoria
+        )
+        dropdown_cat.pack(padx=30, pady=(0, 10))
+
+        # Pré-selecionar a primeira categoria existente, ou a opção de criar nova se vazio
+        if categorias_existentes:
+            dropdown_cat.set(categorias_existentes[0])
+        else:
+            dropdown_cat.set("Criar nova categoria...")
+            ao_selecionar_categoria("Criar nova categoria...")
+
+        def cadastrar():
+            nome = entry_nome.get().strip()
+            preco_str = entry_preco.get().strip()
+            opcao_cat = dropdown_cat.get()
+
+            # Resolver Categoria
+            if opcao_cat == "Criar nova categoria...":
+                categoria = entry_nova_cat.get().strip()
+            else:
+                categoria = opcao_cat
+
+            if not nome or not preco_str or not categoria:
+                messagebox.showerror("Erro", "Todos os campos devem ser preenchidos!", parent=dialog)
                 return
 
-        # Auto-geração do ID incrementado
-        novo_id = max([p.id for p in self.app.cardapio.produtos], default=0) + 1
+            try:
+                preco = float(preco_str)
+                if preco <= 0:
+                    raise ValueError
+            except ValueError:
+                messagebox.showerror("Erro", "Digite um preço decimal válido e maior que zero!", parent=dialog)
+                return
 
-        # Adicionar e salvar
-        novo_produto = Produto(novo_id, nome, preco, categoria)
-        self.app.cardapio.add_produto(novo_produto)
-        salvar_cardapio(self.app.cardapio)
+            # Evita Duplicados
+            nome_low = nome.lower()
+            for p in self.app.cardapio.produtos:
+                if p.nome.lower() == nome_low:
+                    messagebox.showerror("Erro", f"O produto '{nome}' já está cadastrado!", parent=dialog)
+                    return
 
-        # Limpar campos
-        self.entry_nome.delete(0, "end")
-        self.entry_preco.delete(0, "end")
-        self.entry_categoria.delete(0, "end")
+            # Auto-gerar ID
+            novo_id = max([p.id for p in self.app.cardapio.produtos], default=0) + 1
 
-        messagebox.showinfo("Sucesso", f"'{nome}' cadastrado com sucesso!")
-        self.atualizar_lista()
+            # Adicionar e persistir
+            novo_produto = Produto(novo_id, nome, preco, categoria)
+            self.app.cardapio.add_produto(novo_produto)
+            salvar_cardapio(self.app.cardapio)
+
+            messagebox.showinfo("Sucesso", f"'{nome}' cadastrado com sucesso!", parent=dialog)
+            dialog.destroy()
+            self.atualizar_lista()
+
+        btn_cadastrar = ctk.CTkButton(dialog, text="Salvar Produto", height=35, command=cadastrar)
+        btn_cadastrar.pack(padx=30, pady=(15, 0), fill="x")

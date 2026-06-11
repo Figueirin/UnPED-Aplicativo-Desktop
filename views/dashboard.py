@@ -99,7 +99,7 @@ class DashboardFrame(ctk.CTkFrame):
 
             btn_fechar = ctk.CTkButton(
                 card, text="Fechar Conta", height=28, fg_color="#2e7d32", hover_color="#1b5e20",
-                command=lambda num=c.numero: self.app.ir_para_detalhes(num)
+                command=lambda num=c.numero: self.app.ir_para_fechamento(num)
             )
             btn_fechar.grid(row=4, column=0, padx=15, pady=(0, 15), sticky="ew")
 
@@ -154,6 +154,7 @@ class DashboardFrame(ctk.CTkFrame):
                 messagebox.showinfo("Sucesso", f"Comanda #{num} aberta para {nome}!", parent=dialog)
                 dialog.destroy()
                 self.atualizar()
+                self.app.ir_para_detalhes(num)
             else:
                 messagebox.showerror("Erro", f"A comanda #{num} já está ativa no sistema!", parent=dialog)
 
