@@ -160,8 +160,16 @@ class LoginWindow(ctk.CTk):
             messagebox.showerror("Erro", "Todos os campos devem ser preenchidos!")
             return
 
-        if len(senha) < 3:
-            messagebox.showerror("Erro", "A senha deve ter pelo menos 3 caracteres!")
+        if len(nome) > 25:
+            messagebox.showerror("Erro", "O nome não pode exceder 25 caracteres!")
+            return
+
+        if len(username) > 15:
+            messagebox.showerror("Erro", "O nome de usuário (username) não pode exceder 15 caracteres!")
+            return
+
+        if len(senha) < 3 or len(senha) > 20:
+            messagebox.showerror("Erro", "A senha deve ter entre 3 e 20 caracteres!")
             return
 
         from models.usuario import Administrador

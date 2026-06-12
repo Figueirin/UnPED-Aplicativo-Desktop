@@ -79,9 +79,14 @@ class CardapioFrame(ctk.CTkFrame):
                 prod_card = ctk.CTkFrame(self.scroll_frame, fg_color=("gray95", "gray25"))
                 prod_card.pack(fill="x", padx=10, pady=3)
 
+                # Truncar o nome do produto se necessário
+                nome_exibido = p.nome
+                if len(nome_exibido) > 25:
+                    nome_exibido = nome_exibido[:22] + "..."
+
                 lbl_prod_info = ctk.CTkLabel(
                     prod_card,
-                    text=f"[{p.id}] {p.nome}",
+                    text=f"[{p.id}] {nome_exibido}",
                     font=ctk.CTkFont(size=12, weight="bold"),
                     anchor="w"
                 )
@@ -106,6 +111,16 @@ class CardapioFrame(ctk.CTkFrame):
         produto = self.app.cardapio.buscar_produto(produto_id)
         if not produto:
             return
+
+        # Verifica se o produto está em uso em alguma comanda ativa no momento
+        for comanda in self.app.service.comandas_ativas.values():
+            for item in comanda.itens:
+                if item.produto.id == produto_id:
+                    messagebox.showerror(
+                        "Erro", 
+                        f"Não é possível remover o produto '{produto.nome}' porque ele está atualmente lançado na Comanda #{comanda.numero}!"
+                    )
+                    return
 
         if not messagebox.askyesno("Confirmar", f"Tem certeza que deseja remover o produto '{produto.nome}' do cardápio?"):
             return
@@ -133,7 +148,7 @@ class CardapioFrame(ctk.CTkFrame):
         lbl_titulo.pack(pady=(20, 15))
 
         # Campo Nome
-        lbl_nome = ctk.CTkLabel(dialog, text="Nome do Produto", font=ctk.CTkFont(size=12))
+        lbl_nome = ctk.CTkLabel(dialog, text="Nome do Produto (Max 30 caracteres)", font=ctk.CTkFont(size=12))
         lbl_nome.pack(anchor="w", padx=30)
         entry_nome = ctk.CTkEntry(dialog, placeholder_text="Ex: Suco de Uva", width=320)
         entry_nome.pack(padx=30, pady=(0, 10))
@@ -153,7 +168,7 @@ class CardapioFrame(ctk.CTkFrame):
         lbl_cat.pack(anchor="w", padx=30)
 
         # Entrada de Texto adicional para nova categoria (inicialmente invisível)
-        entry_nova_cat = ctk.CTkEntry(dialog, placeholder_text="Digite a nova categoria...", width=320)
+        entry_nova_cat = ctk.CTkEntry(dialog, placeholder_text="Digite a nova categoria (Max 20 chars)...", width=320)
 
         def ao_selecionar_categoria(opcao):
             if opcao == "Criar nova categoria...":
@@ -187,6 +202,18 @@ class CardapioFrame(ctk.CTkFrame):
 
             if not nome or not preco_str or not categoria:
                 messagebox.showerror("Erro", "Todos os campos devem ser preenchidos!", parent=dialog)
+                return
+
+            if len(nome) > 30:
+                messagebox.showerror("Erro", "O nome do produto não pode exceder 30 caracteres!", parent=dialog)
+                return
+
+            if len(categoria) > 20:
+                messagebox.showerror("Erro", "A categoria não pode exceder 20 caracteres!", parent=dialog)
+                return
+
+            if len(preco_str) > 10:
+                messagebox.showerror("Erro", "O preço digitado é excessivamente longo!", parent=dialog)
                 return
 
             try:

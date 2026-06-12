@@ -67,6 +67,7 @@ class DashboardFrame(ctk.CTkFrame):
             card.grid_columnconfigure(0, weight=1)
 
             # Número da Comanda & Cliente
+            # Número da Comanda & Cliente
             lbl_num = ctk.CTkLabel(
                 card, text=f"Comanda #{c.numero}",
                 font=ctk.CTkFont(family="Outfit", size=16, weight="bold"),
@@ -74,8 +75,13 @@ class DashboardFrame(ctk.CTkFrame):
             )
             lbl_num.grid(row=0, column=0, padx=15, pady=(15, 2), sticky="w")
 
+            # Trunca o nome do cliente se for muito longo para não quebrar o design
+            nome_exibicao = c.cliente_nome
+            if len(nome_exibicao) > 20:
+                nome_exibicao = nome_exibicao[:18] + "..."
+
             lbl_cliente = ctk.CTkLabel(
-                card, text=f"Cliente: {c.cliente_nome}",
+                card, text=f"Cliente: {nome_exibicao}",
                 font=ctk.CTkFont(size=13, weight="bold"),
                 anchor="w"
             )
@@ -126,7 +132,7 @@ class DashboardFrame(ctk.CTkFrame):
         entry_num.pack(padx=30, pady=(0, 10))
 
         # Campo Nome do Cliente
-        lbl_nome = ctk.CTkLabel(dialog, text="Nome do Cliente", font=ctk.CTkFont(size=12))
+        lbl_nome = ctk.CTkLabel(dialog, text="Nome do Cliente (Max 25 caracteres)", font=ctk.CTkFont(size=12))
         lbl_nome.pack(anchor="w", padx=30)
         entry_nome = ctk.CTkEntry(dialog, placeholder_text="Ex: Renato", width=290)
         entry_nome.pack(padx=30, pady=(0, 20))
@@ -137,6 +143,14 @@ class DashboardFrame(ctk.CTkFrame):
 
             if not num_str or not nome:
                 messagebox.showerror("Erro", "Todos os campos devem ser preenchidos!", parent=dialog)
+                return
+
+            if len(nome) > 25:
+                messagebox.showerror("Erro", "O nome do cliente não pode exceder 25 caracteres!", parent=dialog)
+                return
+
+            if len(num_str) > 6:
+                messagebox.showerror("Erro", "O número da comanda não pode ter mais de 6 dígitos!", parent=dialog)
                 return
 
             try:

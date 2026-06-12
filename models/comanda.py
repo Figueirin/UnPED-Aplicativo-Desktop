@@ -6,8 +6,18 @@ class Comanda:
     Demonstra o conceito de Composição (com ItemComanda).
     """
     def __init__(self, numero, cliente_nome):
-        self.numero = numero
-        self.cliente_nome = cliente_nome  # Agora guardamos apenas o nome como string direta!
+        try:
+            num_val = int(numero)
+            if num_val <= 0:
+                raise ValueError("O número da comanda deve ser maior que zero.")
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Número de comanda inválido: {numero}") from e
+
+        if not isinstance(cliente_nome, str) or not cliente_nome.strip():
+            raise ValueError("O nome do cliente não pode ser vazio ou conter apenas espaços.")
+
+        self.numero = num_val
+        self.cliente_nome = cliente_nome.strip()
         self.itens = []                   # Composição: Lista contendo objetos da classe ItemComanda
 
     def adicionar_item(self, produto, qtd=1):
@@ -15,14 +25,21 @@ class Comanda:
         Adiciona itens à comanda ativa.
         Se o produto já constar na comanda, apenas atualiza a quantidade para evitar linhas duplicadas.
         """
+        try:
+            qtd_val = int(qtd)
+            if qtd_val <= 0:
+                raise ValueError("A quantidade a adicionar deve ser maior que zero.")
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Quantidade inválida para adicionar: {qtd}") from e
+
         # Varre a lista de itens atuais para buscar duplicatas
         for item in self.itens:
             if item.produto.nome.lower() == produto.nome.lower():
-                item.quantidade += qtd
+                item.quantidade += qtd_val
                 return
 
         # Se for um item inédito, instancia um novo ItemComanda
-        novo_item = ItemComanda(produto, qtd)
+        novo_item = ItemComanda(produto, qtd_val)
         self.itens.append(novo_item)
     
     def calcular_total(self):

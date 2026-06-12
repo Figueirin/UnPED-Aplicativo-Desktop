@@ -13,10 +13,34 @@ class Produto:
         - preco (float): Preço de venda unitário do produto.
         - categoria (str): Categoria à qual o produto pertence (ex: Bebidas, Salgados, etc.).
         """
-        self.id = id_produto
-        self.nome = nome_produto
-        self.preco = preco
-        self.categoria = categoria
+        # Validação do ID
+        try:
+            id_val = int(id_produto)
+            if id_val <= 0:
+                raise ValueError("O ID do produto deve ser maior que zero.")
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"ID inválido para o produto: {id_produto}") from e
+
+        # Validação do Nome
+        if not isinstance(nome_produto, str) or not nome_produto.strip():
+            raise ValueError("O nome do produto não pode ser vazio ou conter apenas espaços.")
+
+        # Validação do Preço
+        try:
+            preco_val = float(preco)
+            if preco_val <= 0:
+                raise ValueError("O preço do produto deve ser maior que zero.")
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Preço inválido para o produto: {preco}") from e
+
+        # Validação da Categoria
+        if not isinstance(categoria, str) or not categoria.strip():
+            raise ValueError("A categoria do produto não pode ser vazia ou conter apenas espaços.")
+
+        self.id = id_val
+        self.nome = nome_produto.strip()
+        self.preco = preco_val
+        self.categoria = categoria.strip()
 
     def to_dict(self):
         """

@@ -6,8 +6,19 @@ class ItemComanda:
     Associa um objeto Produto a uma quantidade comprada.
     """
     def __init__(self, produto, qtd=1):
+        from models.produto import Produto
+        if not isinstance(produto, Produto):
+            raise ValueError("O produto associado deve ser uma instância válida de Produto.")
+        
+        try:
+            qtd_val = int(qtd)
+            if qtd_val <= 0:
+                raise ValueError("A quantidade de itens deve ser maior que zero.")
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Quantidade inválida para o item: {qtd}") from e
+
         self.produto = produto
-        self.quantidade = qtd
+        self.quantidade = qtd_val
 
     def calc_subtotal(self):
         # Delegação: o ItemComanda delega o preço ao produto e multiplica pela quantidade
