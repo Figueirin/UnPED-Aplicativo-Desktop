@@ -1,45 +1,64 @@
-# UnPED - Sistema de Comandas para Bares e Restaurantes
+# UnPED - Sistema de Comandas para Bares e Restaurantes (Versão GUI)
 
 Este projeto é um sistema de comandas ("comandas de consumo") para restaurantes e bares, desenvolvido como projeto prático para a matéria de Programação Orientada a Objetos (OO) da Universidade de Brasília (UnB).
 
-O objetivo do sistema é simular um terminal de PDV (Ponto de Venda) para o garçom: abrir comandas com número e nome, lançar itens pelo nome ou ID, exibir o extrato de consumo parcial com taxas e realizar o fechamento interativo da conta com cálculo de taxa de serviço (10%) e controle de pagamentos (com troco). Toda a persistência é feita localmente em arquivos JSON salvos de forma assíncrona/automatizada a cada operação.
+A aplicação foi modernizada para utilizar uma interface gráfica enriquecida (GUI) em **Python 3.14** com a biblioteca `customtkinter`, simulando um terminal de PDV (Ponto de Venda) completo com restrições de acesso por cargos (Garçom, Gerente, Administrador) e persistência robusta em arquivos JSON.
 
 ---
 
 ## 🏗️ Estrutura de Pastas do Projeto
 
-Para manter o código organizado e garantir o **Princípio da Responsabilidade Única (SRP)**, o projeto foi modularizado da seguinte forma:
+Para manter o código organizado e garantir o **Princípio da Responsabilidade Única (SRP)**, o projeto foi estruturado da seguinte forma:
 
-* `models/`: Classes que representam as entidades de negócio (os dados e suas regras).
-  * `cliente.py`: Representa o cliente (guarda apenas o nome).
-  * `produto.py`: Representa um item do cardápio (ID, nome, preço e categoria).
-  * `pedido_item.py`: Representa a linha do pedido (associa um `Produto` a uma quantidade).
-  * `pedido.py`: A comanda ativa (agrupa o cliente, número da comanda, itens consumidos e calcula taxas).
-  * `cardapio.py`: Gerencia a lista de produtos disponíveis.
-* `services/`: Lógica de controle e persistência de dados.
-  * `pedido_service.py`: Controla o estado das comandas ativas na memória (abrir, buscar, listar e fechar).
-  * `persistencia.py`: Serializa e deserializa os dados em JSON, com tratamento de compatibilidade.
-* `utils/`: Funções utilitárias e interface.
-  * `menu.py`: Agrupa os fluxos de interface do terminal e as funções de validação de input de dados.
-* `data/`: Pasta contendo os arquivos de persistência (`cardapio.json` e `pedidos.json`).
-* `main.py`: Bootstrapper do sistema que inicia os serviços e roda o menu.
+*   **`models/`**: Representa as entidades de domínio do negócio.
+    *   [produto.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/models/produto.py): Representa um item do cardápio com validação estrita de ID, nome, preço e categoria.
+    *   [item_comanda.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/models/item_comanda.py): Representa a linha de consumo (associa um `Produto` a uma quantidade).
+    *   [comanda.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/models/comanda.py): Representa a comanda ativa do cliente (agrupa número, nome do cliente, itens e gera extrato).
+    *   [cardapio.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/models/cardapio.py): Gerencia a lista de produtos disponíveis.
+    *   [usuario.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/models/usuario.py): Define a hierarquia de usuários do sistema (`Garcom`, `Gerente` e `Administrador`).
+*   **`services/`**: Camada de lógica de controle e persistência de dados.
+    *   [comanda_service.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/services/comanda_service.py): Gerencia o estado das comandas em execução na memória.
+    *   [persistencia.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/services/persistencia.py): Serializa e desserializa os dados de cardápio, comandas e usuários em arquivos JSON com segurança.
+*   **`views/`**: Telas e componentes da interface gráfica.
+    *   [login.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/views/login.py): Autenticação, visualização de senha e fallback de registro de Admin inicial em caso de perda de banco de dados.
+    *   [dashboard.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/views/dashboard.py): Grid de visualização rápida de comandas ativas e abertura de novas contas.
+    *   [detalhe_pedido.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/views/detalhe_pedido.py): Lançador de pedidos PDV Mobile-style (buffer de pedidos e transferência de itens restrita a cargos gerenciais).
+    *   [cardapio.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/views/cardapio.py): Cadastro de produtos e exclusão segura.
+    *   [usuarios.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/views/usuarios.py): Cadastro e remoção de operadores do sistema.
+    *   [fechar_comanda.py](file:///c:/Users/Renato/Documents/Antigravity/UnB/OO/UnPED/views/fechar_comanda.py): Fechamento interativo da conta, recebimentos parciais e cálculo automático de troco.
+*   **`data/`**: Arquivos JSON persistentes (`cardapio.json`, `comandas.json` e `usuarios.json`).
+*   **`app.py`**: Ponto de entrada (bootstrapper) principal do sistema em modo gráfico.
 
 ---
 
 ## 📊 Modelagem UML (Diagrama de Classes)
 
-O diagrama abaixo descreve a estrutura de classes e seus respectivos atributos, métodos e tipos de relacionamentos.
+O diagrama abaixo descreve a nova estrutura de classes do UnPED, seus respectivos atributos, métodos e tipos de relacionamentos.
 
 ```mermaid
 classDiagram
     direction TB
     
-    class Cliente {
+    class Usuario {
+        +str username
+        +str senha
         +str nome
-        +__init__(nome)
-        +__str__() str
+        +str cargo
+        +to_dict() dict
     }
-    
+    class Garcom {
+        +__init__(username, senha, nome)
+    }
+    class Gerente {
+        +__init__(username, senha, nome)
+    }
+    class Administrador {
+        +__init__(username, senha, nome)
+    }
+    Usuario <|-- Garcom
+    Usuario <|-- Gerente
+    Usuario <|-- Administrador
+
     class Produto {
         +int id
         +str nome
@@ -50,7 +69,7 @@ classDiagram
         +__str__() str
     }
     
-    class PedidoItem {
+    class ItemComanda {
         +Produto produto
         +int quantidade
         +__init__(produto, qtd)
@@ -59,11 +78,11 @@ classDiagram
         +__str__() str
     }
     
-    class Pedido {
-        +Cliente cliente
-        +int comanda
+    class Comanda {
+        +int numero
+        +str cliente_nome
         +list itens
-        +__init__(num_comanda, cliente)
+        +__init__(numero, cliente_nome)
         +adicionar_item(produto, qtd)
         +calcular_total() float
         +to_dict() dict
@@ -78,21 +97,20 @@ classDiagram
         +buscar_produto(termo) Produto
     }
     
-    class PedidoService {
-        +dict pedidos_ativos
+    class ComandaService {
+        +dict comandas_ativas
         +__init__()
-        +abrir_comanda(num_comanda, nome_cliente) bool
-        +buscar_comandas(num_comanda) Pedido
-        +fechar_comanda(num_comanda) Pedido
+        +abrir_comanda(numero, cliente_nome) bool
+        +buscar_comanda(numero) Comanda
+        +fechar_comanda(numero) Comanda
         +listar_comandas_ativas()
     }
 
     %% Relacionamentos
-    PedidoItem --> Produto : "Associação (1..1)"
-    Pedido *-- PedidoItem : "Composição (0..*)"
-    Pedido o-- Cliente : "Agregação (1..1)"
+    ItemComanda --> Produto : "Associação (1..1)"
+    Comanda *-- ItemComanda : "Composição (0..*)"
     Cardapio o-- Produto : "Agregação (0..*)"
-    PedidoService o-- Pedido : "Agregação (0..*)"
+    ComandaService o-- Comanda : "Agregação (0..*)"
 ```
 
 ---
@@ -100,41 +118,31 @@ classDiagram
 ## 🧠 Conceitos de OO aplicados ao projeto
 
 ### 1. Associação, Agregação e Composição
-* **Associação:** O `PedidoItem` possui uma associação direta a um objeto do tipo `Produto` para consultar seu preço e dados.
-* **Agregação:** O `Pedido` agrega um `Cliente`. Se a comanda for encerrada e excluída, o objeto do `Cliente` continua fazendo sentido isoladamente no sistema (relação fraca). O mesmo ocorre entre `Cardapio` e `Produto`.
-* **Composição:** O `Pedido` é composto de `PedidoItem`. Se o pedido principal for excluído da memória, todas as linhas de consumo pertencentes a ele morrem juntas (relação forte de ciclo de vida).
+*   **Associação:** A classe `ItemComanda` possui uma associação direta a um objeto do tipo `Produto` para consultar seu preço e dados.
+*   **Agregação:** A classe `Cardapio` agrega objetos do tipo `Produto`. Se o cardápio for limpo ou reinstanciado, a existência conceitual dos produtos cadastrados pode continuar de forma independente.
+*   **Composição (Relação Forte):** A classe `Comanda` é composta de objetos `ItemComanda`. Quando uma comanda é encerrada e removida da memória, todas as suas linhas de consumo (`ItemComanda`) associadas deixam de existir, mantendo a integridade do ciclo de vida.
 
-### 2. Delegação de Responsabilidade e DRY (Don't Repeat Yourself)
-* Para calcular o total do item, `PedidoItem` chama `calc_subtotal()`, que por sua vez delega o preço ao `Produto` (`self.produto.preco * self.quantidade`).
-* O extrato completo do pedido centraliza as lógicas de formatação, cálculo de subtotal, aplicação de taxa de serviço (10%) e total geral diretamente no método mágico `__str__` da classe `Pedido`. Tanto o fluxo de ver extrato parcial (Opção 3) quanto o fluxo de fechamento (Opção 4) utilizam o método `print(pedido)` para exibir as informações unificadas, eliminando duplicações no código.
+### 2. Herança e Polimorfismo
+*   A classe base `Usuario` define atributos comuns a todos os operadores. As classes filhas `Garcom`, `Gerente` e `Administrador` herdam essa estrutura básica.
+*   **Polimorfismo Baseado em Regras de Acesso:** A interface gráfica se comporta de forma polimórfica ao ocultar abas e botões reativos da sidebar baseando-se no cargo do usuário ativo (ex: apenas Gerente/Admin visualiza aba de Cardápio; apenas Administrador visualiza Usuários; e opções críticas como transferência de itens dependem da verificação dinâmica do cargo).
 
-### 3. Padrão de Roteamento Pythônico (Dispatcher Pattern)
-Na `main.py`, preferi substituír o tradicional encadeamento de dezenas de estruturas `if-elif-else` por um **dicionário de funções** mapeadas por opção digitada:
-```python
-acoes = {
-    "1": fluxo_abrir_comanda,
-    "2": fluxo_adicionar_item,
-    "3": fluxo_ver_extrato,
-    # ...
-}
-```
-Isso torna o fluxo de controle extremamente elegante, modular e fácil de expandir (basta adicionar uma nova chave e criar a função correspondente sem mexer no loop do menu).
-
-### 4. Tratamento de Exceções e Resiliência
-* Todos os inputs numéricos passam por funções auxiliares de tratamento (`obter_inteiro` e `obter_float`), que utilizam um loop com bloco `try/except ValueError` para garantir que o console não quebre caso o usuário digite texto onde deveria digitar valores numéricos.
-* O sistema de busca de produtos aceita buscas flexíveis (seja pelo número do ID do produto ou pelo nome exato, sem distinção de maiúsculas e minúsculas).
+### 3. Encapsulamento & Validação Fail-Fast (Defensive Coding)
+*   **Validação Estrita:** Em vez de depender apenas do tratamento de dados na interface (views), as validações foram inseridas diretamente no construtor dos modelos. Instanciar um produto com preço negativo, um item de comanda com quantidade zerada, ou uma comanda com cliente vazio dispara um `ValueError` imediatamente. Isso protege o banco de dados contra corrupções em qualquer nível de integração.
 
 ---
 
-## 💾 Persistência de Dados
-Desenvolvi uma camada de persistência em arquivos JSON locais na pasta `data/`.
-Toda vez que uma nova comanda é aberta, um produto é lançado, ou uma conta é fechada, a persistência é ativada em segundo plano. O sistema também implementa checagem com métodos `.get()` para garantir compatibilidade caso arquivos JSON gerados em versões antigas do app sejam carregados.
+## 🛡️ Mecanismos de Segurança Implementados
+
+1.  **Salvaguarda contra perda de banco de dados:** Se o arquivo `usuarios.json` for deletado ou corrompido, a tela de login detecta a falha e se transforma em uma tela de cadastro inicial de Administrador do sistema, efetuando o login automático logo após a persistência bem-sucedida.
+2.  **Proteção de integridade no Cardápio:** O sistema impede a remoção de qualquer produto que esteja atualmente lançado em alguma comanda ativa, alertando o operador e evitando itens órfãos/valores nulos na inicialização seguinte.
+3.  **Controle de estouro de Grid (UI):** Limitações físicas de caracteres nos campos de formulário (ex: nome do cliente limitado a 25 caracteres, produto a 30) e truncagem por reticências (`...`) impedem que entradas longas quebrem as proporções e ocultem botões de ação na interface.
+4.  **Arredondamento Financeiro:** Utilização de `round(falta, 2)` na apuração de saldo devedor de comandas, prevenindo que imprecisões decimais da especificação de ponto flutuante (IEEE 754) impeçam o fechamento correto de contas quitadas.
 
 ---
 
 ## 🚀 Como executar o projeto
 
-Abra o seu terminal e execute os comandos abaixo para clonar o repositório e rodar o sistema:
+Certifique-se de ter o Python 3.10+ instalado em sua máquina.
 
 ```bash
 # 1. Clone o repositório
@@ -143,7 +151,11 @@ git clone https://github.com/Figueirin/UnPED
 # 2. Acesse a pasta do projeto
 cd UnPED
 
-# 3. Execute o programa
-python main.py
+# 3. Instale a biblioteca CustomTkinter (caso ainda não possua)
+pip install customtkinter
+
+# 4. Execute a aplicação em modo gráfico
+python app.py
 ```
 
+*Nota: A versão para linha de comando original pode ser executada por `python main.py`.*
