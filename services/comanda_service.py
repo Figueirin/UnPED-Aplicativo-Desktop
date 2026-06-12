@@ -12,13 +12,11 @@ class ComandaService:
     def abrir_comanda(self, numero, cliente_nome):
         # Bloqueio de duplicados: se a comanda já estiver aberta, cancela a operação
         if numero in self.comandas_ativas:
-            print(f"A comanda N.º {numero} | Está aberta no nome {self.comandas_ativas[numero].cliente_nome}")
             return False
 
         # Instancia a comanda e insere no dicionário
         nova_comanda = Comanda(numero, cliente_nome)
         self.comandas_ativas[numero] = nova_comanda
-        print(f"Comanda: {numero} | Nome: {cliente_nome}")
         return True
 
     def buscar_comanda(self, numero):

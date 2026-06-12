@@ -110,14 +110,16 @@ class FecharComandaFrame(ctk.CTkFrame):
         self.txt_extrato.insert("1.0", str(self.comanda))
         self.txt_extrato.configure(state="disabled")
 
-        # Atualizar Valores de Pagamento
         subtotal = self.comanda.calcular_total()
         taxa = subtotal * 0.10
         total_geral = subtotal + taxa
 
+        falta = total_geral - self.pago_acumulado
+        # Evita erros microscópicos de imprecisão do float (IEEE 754)
+        falta = round(falta, 2)
+
         self.lbl_pago_acumulado.configure(text=f"Total Pago: R$ {self.pago_acumulado:.2f}")
 
-        falta = total_geral - self.pago_acumulado
         if falta > 0:
             self.lbl_falta_troco.configure(
                 text=f"Falta pagar: R$ {falta:.2f}",
